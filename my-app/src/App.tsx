@@ -1,35 +1,34 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import FetchFactButton from './components/fetch-fact-button/fetchFactButton';
+import SuccessMessage from './components/error-handling/success/success-message';
+import ErrorMessage from './components/error-handling/error/error-message';
+import axios from 'axios';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [fact, setFact] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchFact = async (): Promise<void> => {
+    setError(null);
+    try {
+      const response = await axios.get('https://catfact.ninja/fact');
+      setFact(response.data.fact);
+    }
+    catch {
+      setFact(null);
+      setError('Something went wrong.');
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="App">
+      <FetchFactButton fetchFact={fetchFact} />
+      
+      {fact && <SuccessMessage fact={fact} />}
+      {error && <ErrorMessage error={error} />}
+    </div>
+  );
+};
 
-export default App
+export default App;
