@@ -27,7 +27,7 @@ const App = () => {
   const fetchWeatherData = async (): Promise<void> => {
     setWeatherError(null);
     try {
-      const response = await axios.get('http://localhost:4342/weatherforecast');
+      const response = await axios.get('/weatherforecast');
       setWeatherData(response.data);
     } catch {
       setWeatherError('Something went wrong while fetching weather data.');
