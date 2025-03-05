@@ -12,6 +12,8 @@ const App = () => {
   const [weatherData, setWeatherData] = useState<WeatherForecast[]>([]);
   const [weatherError, setWeatherError] = useState<string | null>(null);
 
+  const isSplitHost = true;
+
   const fetchFact = async (): Promise<void> => {
     setError(null);
     try {
@@ -24,10 +26,20 @@ const App = () => {
     }
   };
 
+  const deleteResource = async (): Promise<void> => {
+    setError(null);
+    try {
+      await axios.delete('http://localhost:8787/weatherforecast/delete-info');
+    }
+    catch {
+      setError('Something went wrong.');
+    }
+  };
+
   const fetchWeatherData = async (): Promise<void> => {
     setWeatherError(null);
     try {
-      const response = await axios.get('/weatherforecast');
+      const response = await axios.get(isSplitHost ? 'http://localhost:8787/weatherforecast' :'/weatherforecast');
       setWeatherData(response.data);
     } catch {
       setWeatherError('Something went wrong while fetching weather data.');
@@ -46,6 +58,10 @@ const App = () => {
         weatherData={weatherData}
         error={weatherError}
       />
+      <br/>
+      <button onClick={deleteResource}>
+        Delete Resource
+      </button>
     </div>
   );
 };
