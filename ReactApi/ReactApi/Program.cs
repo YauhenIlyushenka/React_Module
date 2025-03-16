@@ -1,7 +1,20 @@
+string myPolicy = "MyPolicy";
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configure Cors
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy(name: myPolicy, corsBuilder =>
+	{
+		corsBuilder.WithOrigins(builder.Configuration.GetSection("CORS:Origins").Get<string[]>()!)
+			.WithHeaders(builder.Configuration.GetSection("CORS:Headers").Get<string[]>()!)
+			.WithMethods(builder.Configuration.GetSection("CORS:Methods").Get<string[]>()!);
+	});
+});
 
+
+// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddWindowsService();
 
@@ -23,9 +36,11 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseSpaStaticFiles(); // this middleware for handling frontend application's static compiled files
+
+app.UseCors(myPolicy); // enable CORS
 app.UseSpa(spa =>
 {
 	spa.Options.SourcePath = "ClientApp";
