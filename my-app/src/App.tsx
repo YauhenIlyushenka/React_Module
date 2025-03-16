@@ -1,69 +1,28 @@
-import { useState } from 'react'
-import './App.css'
-import FetchFactButton from './components/fetch-fact-button/fetchFactButton';
-import SuccessMessage from './components/error-handling/success/success-message';
-import ErrorMessage from './components/error-handling/error/error-message';
-import axios from 'axios';
-import WeatherForecast from './components/weather-forecast/weatherForecast';
+import { Provider } from 'react-redux';
+import store from './store/store';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import NotFoundPage from './pages/NotFoundPage';
+import './App.css';
 
 const App = () => {
-  const [fact, setFact] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [weatherData, setWeatherData] = useState<WeatherForecast[]>([]);
-  const [weatherError, setWeatherError] = useState<string | null>(null);
-
-  const isSplitHost = true;
-
-  const fetchFact = async (): Promise<void> => {
-    setError(null);
-    try {
-      const response = await axios.get('https://catfact.ninja/fact');
-      setFact(response.data.fact);
-    }
-    catch {
-      setFact(null);
-      setError('Something went wrong.');
-    }
-  };
-
-  const deleteResource = async (): Promise<void> => {
-    setError(null);
-    try {
-      await axios.delete('http://localhost:8787/weatherforecast/delete-info');
-    }
-    catch {
-      setError('Something went wrong.');
-    }
-  };
-
-  const fetchWeatherData = async (): Promise<void> => {
-    setWeatherError(null);
-    try {
-      const response = await axios.get(isSplitHost ? 'http://localhost:8787/weatherforecast' :'/weatherforecast');
-      setWeatherData(response.data);
-    } catch {
-      setWeatherError('Something went wrong while fetching weather data.');
-    }
-  };
-
   return (
-    <div className="App">
-      <FetchFactButton fetchFact={fetchFact} />
-      <br/>
-      {fact && <SuccessMessage fact={fact} />}
-      {error && <ErrorMessage error={error} />}
-      <br/>
-      <button onClick={fetchWeatherData}>Load Weather Forecast</button>
-      <WeatherForecast
-        weatherData={weatherData}
-        error={weatherError}
-      />
-      <br/>
-      <button onClick={deleteResource}>
-        Delete Resource
-      </button>
-    </div>
+    <Provider store={store}>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </div>
+      </Router>
+    </Provider>
   );
 };
 
 export default App;
+
