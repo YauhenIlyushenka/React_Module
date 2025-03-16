@@ -7,6 +7,7 @@ import FetchFactButton from '../components/fetch-fact-button/fetchFactButton';
 import SuccessMessage from '../components/error-handling/success/success-message';
 import ErrorMessage from '../components/error-handling/error/error-message';
 import WeatherForecast from '../components/weather-forecast/weatherForecast';
+import JobNotifications from '../components/notificaction/jobNotificaction';
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -51,6 +52,8 @@ const HomePage = () => {
   return (
     <div>
       <h1>Home Page</h1>
+      <JobNotifications />
+      <br />
       <FetchFactButton fetchFact={fetchFact} />
       <br />
       {fact && <SuccessMessage fact={fact} />}
